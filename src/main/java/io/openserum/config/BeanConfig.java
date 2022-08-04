@@ -1,6 +1,5 @@
 package io.openserum.config;
 
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -10,8 +9,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
-
-import javax.sql.DataSource;
 
 @EnableScheduling
 @Configuration
@@ -40,16 +37,6 @@ public class BeanConfig {
         threadPoolTaskScheduler.setPoolSize(24);
         threadPoolTaskScheduler.setThreadNamePrefix("SerumThread");
         return threadPoolTaskScheduler;
-    }
-
-    @Bean
-    public DataSource getDataSource() {
-        DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.driverClassName("org.postgresql.Driver");
-        dataSourceBuilder.url("jdbc:postgresql://localhost:5432/solana");
-        dataSourceBuilder.username("solana");
-        dataSourceBuilder.password("solana");
-        return dataSourceBuilder.build();
     }
 
 }
