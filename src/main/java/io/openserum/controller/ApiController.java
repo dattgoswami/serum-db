@@ -21,22 +21,20 @@ public class ApiController {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @GetMapping(value = "/market/{marketId}")
-    public String getMarket(@PathVariable String marketId) {
-        PublicKey marketPubkey = new PublicKey(marketId);
+    @GetMapping(value = "/serum/account/{accountId}")
+    public String getAccount(@PathVariable String accountId) {
+        PublicKey accountPubkey = new PublicKey(accountId);
 
         String sql = "SELECT data FROM account WHERE pubkey=decode(?, 'hex')";
         Map<String, Object> rowData = jdbcTemplate.queryForMap(
                 sql,
                 BaseEncoding.base16().lowerCase().encode(
-                        marketPubkey.toByteArray()
+                        accountPubkey.toByteArray()
                 )
         );
 
         byte[] accountData = (byte[]) rowData.get("data");
         String response = Base64.getEncoder().encodeToString(accountData);
-
-        log.info(response);
 
         return response;
     }
