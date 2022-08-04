@@ -27,6 +27,6 @@ RUN mvn -f /home/app/pom.xml clean package -DskipTests
 #
 FROM openjdk:17.0.2-slim
 COPY --from=build /home/app/target/serum-db-1.0-SNAPSHOT.jar /usr/local/lib/serumdb.jar
-ENV JAVA_TOOL_OPTIONS -agentlib:jdwp=transport=dt_socket,address=*:8000,server=y,suspend=n
+#ENV JAVA_TOOL_OPTIONS -agentlib:jdwp=transport=dt_socket,address=*:8000,server=y,suspend=n
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/usr/local/lib/serumdb.jar"]
