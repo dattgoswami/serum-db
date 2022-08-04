@@ -11,6 +11,9 @@ public class ApiController {
 
     @GetMapping(value = "/api/serum/market/{marketId}")
     public MarketResponse getMarket(@PathVariable String marketId) {
+        // query postgres for binary data
+        // deserialize into Market object
+
         PublicKey placeholderResponse = PublicKey.valueOf("9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT");
 
         return new MarketResponse(
