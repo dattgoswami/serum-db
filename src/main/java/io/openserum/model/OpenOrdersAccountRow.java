@@ -1,40 +1,22 @@
 package io.openserum.model;
 
 import ch.openserum.serum.model.OpenOrdersAccount;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.openserum.util.PublicKeySerializer;
+import lombok.Builder;
 import org.p2p.solanaj.core.PublicKey;
 
+import java.util.List;
+
+@Builder
 public class OpenOrdersAccountRow {
 
+    @JsonSerialize(using = PublicKeySerializer.class)
     private PublicKey publicKey;
-    private byte[] data;
-    private OpenOrdersAccount openOrdersAccount;
+    private List<OpenOrdersAccount.Order> orders;
 
-    public OpenOrdersAccountRow(byte[] pubkey, byte[] data) {
-        this.publicKey = new PublicKey(pubkey);
-        this.data = data;
-    }
-
-    public PublicKey getPublicKey() {
-        return publicKey;
-    }
-
-    public void setPublicKey(PublicKey publicKey) {
-        this.publicKey = publicKey;
-    }
-
-    public byte[] getData() {
-        return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
-    }
-
-    public OpenOrdersAccount getOpenOrdersAccount() {
-        return openOrdersAccount;
-    }
-
-    public void setOpenOrdersAccount(OpenOrdersAccount openOrdersAccount) {
-        this.openOrdersAccount = openOrdersAccount;
+    public OpenOrdersAccountRow(PublicKey pubkey, List<OpenOrdersAccount.Order> orders) {
+        this.publicKey = pubkey;
+        this.orders = orders;
     }
 }

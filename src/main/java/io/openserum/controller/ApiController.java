@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Base64;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -59,26 +58,26 @@ public class ApiController {
         return slot;
     }
 
-    @GetMapping(value = "/serum/orders")
-    public List<OpenOrdersAccountRow> getOpenOrderAccounts() {
-        String sql = "SELECT pubkey, data FROM account WHERE length(data)=3228";
+    @GetMapping(value = "/serum/orders/{owner}")
+    public List<OpenOrdersAccountRow> getOpenOrderAccounts(@PathVariable String owner) {
+        PublicKey ownerPubkey = new PublicKey(owner);
+        String sql = "SELECT pubkey, data " +
+                "FROM account " +
+                "WHERE length(data)=3228 and position" +
+                "('\\x" + BaseEncoding.base16().lowerCase().encode(ownerPubkey.toByteArray()) + "'::bytea in data)>0";
 
         List<OpenOrdersAccountRow> openOrdersAccountRows = jdbcTemplate.query(
                 sql,
-                (rs, rowNum) ->
-                        new OpenOrdersAccountRow(
-                                rs.getBytes("pubkey"),
-                                rs.getBytes("data")
-                        )
+                (rs, rowNum) -> {
+                    OpenOrdersAccount openOrdersAccount = OpenOrdersAccount.readOpenOrdersAccount(
+                            rs.getBytes("data")
+                    );
+                    return OpenOrdersAccountRow.builder()
+                            .publicKey(openOrdersAccount.getOwner())
+                            .orders(openOrdersAccount.getOrders().size() == 0 ? null : openOrdersAccount.getOrders())
+                            .build();
+                }
         );
-
-        // process each object (not in the first loop to drop DB handle quickly)
-        for(OpenOrdersAccountRow openOrdersAccountRow : openOrdersAccountRows) {
-            OpenOrdersAccount openOrdersAccount = OpenOrdersAccount.readOpenOrdersAccount(
-                    openOrdersAccountRow.getData()
-            );
-            openOrdersAccountRow.setOpenOrdersAccount(openOrdersAccount);
-        }
 
         return openOrdersAccountRows;
     }
