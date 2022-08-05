@@ -61,14 +61,14 @@ public class ApiController {
 
     @GetMapping(value = "/serum/orders")
     public List<OpenOrdersAccountRow> getOpenOrderAccounts() {
-        String sql = "SELECT data FROM account WHERE length(data)=3228";
+        String sql = "SELECT pubkey, data FROM account WHERE length(data)=3228";
 
         List<OpenOrdersAccountRow> openOrdersAccountRows = jdbcTemplate.query(
                 sql,
                 (rs, rowNum) ->
                         new OpenOrdersAccountRow(
                                 rs.getBytes("pubkey"),
-                                rs.getBytes("name")
+                                rs.getBytes("data")
                         )
         );
 
