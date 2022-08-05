@@ -38,4 +38,19 @@ public class ApiController {
 
         return response;
     }
+
+    @GetMapping(value = "/serum/slot/{accountId}")
+    public String getSlot(@PathVariable String accountId) {
+        PublicKey accountPubkey = new PublicKey(accountId);
+
+        String sql = "SELECT data FROM account WHERE pubkey=decode(?, 'hex')";
+        Map<String, Object> rowData = jdbcTemplate.queryForMap(
+                sql,
+                BaseEncoding.base16().lowerCase().encode(
+                        accountPubkey.toByteArray()
+                )
+        );
+
+        return (String) rowData.get("slot");
+    }
 }
