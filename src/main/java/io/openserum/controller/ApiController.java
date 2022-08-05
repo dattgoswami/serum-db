@@ -73,7 +73,7 @@ public class ApiController {
                             rs.getBytes("data")
                     );
                     return OpenOrdersAccountRow.builder()
-                            .publicKey(openOrdersAccount.getOwner())
+                            .market(openOrdersAccount.getMarket())
                             .orders(openOrdersAccount.getOrders().size() == 0 ? null : openOrdersAccount.getOrders())
                             .build();
                 }

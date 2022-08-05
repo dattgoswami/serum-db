@@ -13,6 +13,8 @@ public class OpenOrdersAccountRow {
 
     @JsonSerialize(using = PublicKeySerializer.class)
     private PublicKey publicKey;
+    @JsonSerialize(using = PublicKeySerializer.class)
+    private PublicKey market;
     private List<OpenOrdersAccount.Order> orders;
 
     public OpenOrdersAccountRow(PublicKey pubkey, List<OpenOrdersAccount.Order> orders) {
