@@ -3,6 +3,7 @@ package io.openserum.controller;
 import ch.openserum.serum.model.OpenOrdersAccount;
 import com.google.common.io.BaseEncoding;
 import io.openserum.model.OpenOrdersAccountRow;
+import io.openserum.model.OrderRow;
 import lombok.extern.slf4j.Slf4j;
 import org.p2p.solanaj.core.PublicKey;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +63,7 @@ public class ApiController {
     @GetMapping(value = "/serum/orders/{owner}")
     public List<OpenOrdersAccountRow> getOpenOrderAccounts(@PathVariable String owner) {
         PublicKey ownerPubkey = new PublicKey(owner);
-        String sql = "SELECT pubkey, data " +
+        String sql = "SELECT data " +
                 "FROM account " +
                 "WHERE length(data)=3228 and position" +
                 "('\\x" + BaseEncoding.base16().lowerCase().encode(ownerPubkey.toByteArray()) + "'::bytea in data)>0";
@@ -70,15 +72,28 @@ public class ApiController {
                 sql,
                 (rs, rowNum) -> {
                     OpenOrdersAccount openOrdersAccount = OpenOrdersAccount.readOpenOrdersAccount(
-                            rs.getBytes("data")
+                            rs.getBytes(1)
                     );
+
+                    List<OrderRow> orderRows = convertOrdersToOrderRows(openOrdersAccount.getOrders());
+
                     return OpenOrdersAccountRow.builder()
                             .market(openOrdersAccount.getMarket())
-                            .orders(openOrdersAccount.getOrders().size() == 0 ? null : openOrdersAccount.getOrders())
+                            .orders(orderRows)
                             .build();
                 }
         );
 
         return openOrdersAccountRows;
+    }
+
+    private List<OrderRow> convertOrdersToOrderRows(List<OpenOrdersAccount.Order> orders) {
+        if (orders.size() == 0) {
+            return Collections.emptyList();
+        }
+
+        return orders.stream()
+                .map(order -> OrderRow.builder().price(order.getPrice()).bid(order.isBid()).build())
+                .toList();
     }
 }

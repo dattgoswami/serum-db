@@ -1,6 +1,5 @@
 package io.openserum.model;
 
-import ch.openserum.serum.model.OpenOrdersAccount;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.openserum.util.PublicKeySerializer;
 import lombok.Builder;
@@ -15,5 +14,5 @@ public class OpenOrdersAccountRow {
     @JsonSerialize(using = PublicKeySerializer.class)
     private PublicKey market;
     @JsonSerialize
-    private List<OpenOrdersAccount.Order> orders;
+    private List<OrderRow> orders;
 }
