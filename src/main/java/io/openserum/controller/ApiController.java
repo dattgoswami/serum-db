@@ -77,14 +77,18 @@ public class ApiController {
 
                     List<OrderRow> orderRows = convertOrdersToOrderRows(openOrdersAccount.getOrders());
 
-                    return OpenOrdersAccountRow.builder()
+                    OpenOrdersAccountRow row = OpenOrdersAccountRow.builder()
                             .market(openOrdersAccount.getMarket())
                             .orders(orderRows)
                             .build();
+
+                    return row;
                 }
         );
 
-        return openOrdersAccountRows;
+        return openOrdersAccountRows.stream()
+                .filter(openOrdersAccountRow -> openOrdersAccountRow.getOrders() != null)
+                .toList();
     }
 
     private List<OrderRow> convertOrdersToOrderRows(List<OpenOrdersAccount.Order> orders) {

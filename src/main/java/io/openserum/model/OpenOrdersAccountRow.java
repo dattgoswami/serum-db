@@ -15,4 +15,8 @@ public class OpenOrdersAccountRow {
     private PublicKey market;
     @JsonSerialize
     private List<OrderRow> orders;
+
+    public List<OrderRow> getOrders() {
+        return orders;
+    }
 }
