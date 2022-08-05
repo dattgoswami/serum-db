@@ -11,14 +11,9 @@ import java.util.List;
 @Builder
 public class OpenOrdersAccountRow {
 
-    @JsonSerialize(using = PublicKeySerializer.class)
     private PublicKey publicKey;
     @JsonSerialize(using = PublicKeySerializer.class)
     private PublicKey market;
+    @JsonSerialize
     private List<OpenOrdersAccount.Order> orders;
-
-    public OpenOrdersAccountRow(PublicKey pubkey, List<OpenOrdersAccount.Order> orders) {
-        this.publicKey = pubkey;
-        this.orders = orders;
-    }
 }
