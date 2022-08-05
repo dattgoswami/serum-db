@@ -87,7 +87,7 @@ public class ApiController {
         );
 
         return openOrdersAccountRows.stream()
-                .filter(openOrdersAccountRow -> openOrdersAccountRow.getOrders() != null)
+                .filter(openOrdersAccountRow -> openOrdersAccountRow.getOrders().size() > 0)
                 .toList();
     }
 
