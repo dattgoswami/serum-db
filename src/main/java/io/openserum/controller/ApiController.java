@@ -40,7 +40,7 @@ public class ApiController {
     }
 
     @GetMapping(value = "/serum/slot/{accountId}")
-    public String getSlot(@PathVariable String accountId) {
+    public Long getSlot(@PathVariable String accountId) {
         PublicKey accountPubkey = new PublicKey(accountId);
 
         String sql = "SELECT data FROM account WHERE pubkey=decode(?, 'hex')";
@@ -51,6 +51,6 @@ public class ApiController {
                 )
         );
 
-        return (String) rowData.get("slot");
+        return (Long) rowData.get("slot");
     }
 }
