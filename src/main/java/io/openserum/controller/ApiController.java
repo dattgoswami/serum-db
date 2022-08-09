@@ -2,19 +2,19 @@ package io.openserum.controller;
 
 import ch.openserum.serum.model.OpenOrdersAccount;
 import com.google.common.io.BaseEncoding;
+import io.openserum.model.AccountInfoRow;
 import io.openserum.model.OpenOrdersAccountRow;
 import io.openserum.model.OrderRow;
 import lombok.extern.slf4j.Slf4j;
 import org.p2p.solanaj.core.PublicKey;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.jdbc.core.*;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -43,6 +43,33 @@ public class ApiController {
 
         return response;
     }
+
+    @PostMapping("/serum/accounts")
+    public List<AccountInfoRow> getMultipleAccounts(@RequestBody List<String> accountIds) {
+        String pubkeys;
+        try {
+            pubkeys = accountIds.stream()
+                    .map(pubkey -> {
+                                byte[] byteArray = new PublicKey(pubkey).toByteArray();
+                                return "decode('" + BaseEncoding.base16().lowerCase().encode(byteArray) + "', 'hex')";
+                            }
+                    )
+                    .collect(Collectors.joining(","));
+        } catch (IllegalArgumentException ex) {
+            return Collections.emptyList();
+        }
+
+        List<AccountInfoRow> result = jdbcTemplate.query(
+                String.format(
+                        "select pubkey as publicKey, data from account where pubkey in (%s);",
+                        pubkeys
+                ),
+                BeanPropertyRowMapper.newInstance(AccountInfoRow.class)
+        );
+
+        return result;
+    }
+
 
     @GetMapping(value = "/serum/slot/{accountId}")
     public Long getSlot(@PathVariable String accountId) {
