@@ -27,21 +27,28 @@ public class ApiController {
     }
 
     @GetMapping(value = "/serum/account/{accountId}")
-    public String getAccount(@PathVariable String accountId) {
+    public AccountInfoRow getAccount(@PathVariable String accountId) {
         PublicKey accountPubkey = new PublicKey(accountId);
+        byte[] pubkeyArray = accountPubkey.toByteArray();
 
-        String sql = "SELECT data FROM account WHERE pubkey=decode(?, 'hex')";
+        String sql = "SELECT slot, data FROM account WHERE pubkey=decode(?, 'hex')";
         Map<String, Object> rowData = jdbcTemplate.queryForMap(
                 sql,
                 BaseEncoding.base16().lowerCase().encode(
-                        accountPubkey.toByteArray()
+                        pubkeyArray
                 )
         );
 
         byte[] accountData = (byte[]) rowData.get("data");
-        String response = Base64.getEncoder().encodeToString(accountData);
+        Long slot = (Long) rowData.get("slot");
 
-        return response;
+        final AccountInfoRow result = AccountInfoRow.builder()
+                .data(accountData)
+                .slot(slot)
+                .publicKey(pubkeyArray)
+                .build();
+
+        return result;
     }
 
     @PostMapping("/serum/accounts")
@@ -61,7 +68,7 @@ public class ApiController {
 
         List<AccountInfoRow> result = jdbcTemplate.query(
                 String.format(
-                        "select pubkey as publicKey, data from account where pubkey in (%s);",
+                        "select pubkey as publicKey, data, slot from account where pubkey in (%s);",
                         pubkeys
                 ),
                 BeanPropertyRowMapper.newInstance(AccountInfoRow.class)
@@ -71,6 +78,7 @@ public class ApiController {
     }
 
 
+    @Deprecated
     @GetMapping(value = "/serum/slot/{accountId}")
     public Long getSlot(@PathVariable String accountId) {
         PublicKey accountPubkey = new PublicKey(accountId);
