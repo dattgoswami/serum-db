@@ -26,6 +26,16 @@ public class ApiController {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @GetMapping(value = "/serum/markets")
+    public List<AccountInfoRow> getMarkets() {
+        return jdbcTemplate.query(
+                "select pubkey as publicKey, data, slot" +
+                        " from account" +
+                        " where length(data)=388;",
+                BeanPropertyRowMapper.newInstance(AccountInfoRow.class)
+        );
+    }
+
     @GetMapping(value = "/serum/account/{accountId}")
     public AccountInfoRow getAccount(@PathVariable String accountId) {
         PublicKey accountPubkey = new PublicKey(accountId);
