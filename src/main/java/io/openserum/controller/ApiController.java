@@ -1,6 +1,6 @@
 package io.openserum.controller;
 
-import ch.openserum.serum.model.OpenOrdersAccount;
+import com.mmorrell.serum.model.OpenOrdersAccount;
 import com.google.common.io.BaseEncoding;
 import io.openserum.model.AccountInfoRow;
 import io.openserum.model.OpenOrdersAccountRow;
@@ -10,7 +10,6 @@ import org.p2p.solanaj.core.PublicKey;
 import org.springframework.jdbc.core.*;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
