@@ -108,10 +108,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-        <repository>
-            <id>Sonatype Releases</id>
-            <url>https://oss.sonatype.org/content/repositories/releases/</url>
-        </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
