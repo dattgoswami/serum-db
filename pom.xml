@@ -40,12 +40,12 @@
         <dependency>
             <groupId>com.mmorrell</groupId>
             <artifactId>solanaj</artifactId>
-            <version>1.9-SNAPSHOT</version>
+            <version>1.10</version>
         </dependency>
         <dependency>
-            <groupId>ch.openserum</groupId>
+            <groupId>com.mmorrell</groupId>
             <artifactId>serum</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
@@ -107,6 +107,10 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <id>Sonatype Releases</id>
+            <url>https://oss.sonatype.org/content/repositories/releases/</url>
         </repository>
     </repositories>
     <pluginRepositories>

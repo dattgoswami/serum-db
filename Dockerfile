@@ -3,24 +3,10 @@
 #
 FROM maven:3.8.6-eclipse-temurin-17 AS build
 
-RUN apt-get update \
-    && apt-get install -y unzip
-
-# solanaj (dependency, not in a public registry)
-ADD https://github.com/skynetcap/solanaj/archive/refs/heads/main.zip /home/solanaj/solanaj.zip
-RUN unzip /home/solanaj/solanaj.zip -d /home/solanaj/
-RUN mvn -f /home/solanaj/solanaj-main/pom.xml clean install -DskipTests
-
-# solanaj-programs (dependency, not in a public registry)
-ADD https://github.com/skynetcap/solanaj-programs/archive/refs/heads/master.zip /home/solanaj-programs/solanaj-programs.zip
-RUN unzip /home/solanaj-programs/solanaj-programs.zip -d /home/solanaj-programs/
-RUN mvn -f /home/solanaj-programs/solanaj-programs-master/pom.xml clean install -DskipTests
-
 # serum-data
 COPY src /home/app/src
 COPY pom.xml /home/app
 RUN mvn -f /home/app/pom.xml clean package -DskipTests
-
 
 #
 # Package stage
