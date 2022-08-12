@@ -63,6 +63,10 @@ public class ApiController {
 
     @PostMapping("/serum/accounts")
     public List<AccountInfoRow> getMultipleAccounts(@RequestBody List<String> accountIds) {
+        if (accountIds.size() == 0) {
+            return Collections.emptyList();
+        }
+
         String pubkeys;
         try {
             pubkeys = accountIds.stream()
@@ -78,7 +82,7 @@ public class ApiController {
 
         List<AccountInfoRow> result = jdbcTemplate.query(
                 String.format(
-                        "select pubkey as publicKey, data, slot from account where pubkey in (%s);",
+                        "select pubkey as publicKey, data, slot from account where pubkey in (%s)",
                         pubkeys
                 ),
                 BeanPropertyRowMapper.newInstance(AccountInfoRow.class)
